@@ -75,7 +75,5 @@ public class SecKillController {
         }
         return String.valueOf(id);
     }
-    
-    
 
 }

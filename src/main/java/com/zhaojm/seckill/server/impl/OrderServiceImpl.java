@@ -21,7 +21,7 @@ public class OrderServiceImpl implements IOrderService {
     private IStockOrderMapper stockOrderMapper;
     
     @Autowired
-    private RedisTemplate<String,String> redisTemplate ;
+    private RedisTemplate<String, Object> redisTemplate ;
     
     /**
      * 1.多线程错误生成错误数量订单
@@ -106,17 +106,23 @@ public class OrderServiceImpl implements IOrderService {
     }
     
     private StockDTO checkStockByRedis(int sid) {
-        Integer count = Integer.parseInt(redisTemplate.opsForValue().get(RedisKeysConstant.STOCK_COUNT + sid));
-        Integer sale = Integer.parseInt(redisTemplate.opsForValue().get(RedisKeysConstant.STOCK_SALE + sid));
-        if (count.equals(sale)){
-            throw new RuntimeException("库存不足 Redis currentCount=" + sale);
+        StockDTO stock = (StockDTO) redisTemplate.opsForValue().get(RedisKeysConstant.STOCK_GOODS + sid);
+        if(null == stock) {
+            StockDTO stockInit = stockMapper.selectByPrimaryKey(sid);
+            redisTemplate.opsForValue().set(RedisKeysConstant.STOCK_GOODS + sid, stockInit);
+            stock = stockInit;
         }
-        Integer version = Integer.parseInt(redisTemplate.opsForValue().get(RedisKeysConstant.STOCK_VERSION + sid));
-        StockDTO stock = new StockDTO() ;
-        stock.setId(sid);
-        stock.setCount(count);
-        stock.setSale(sale);
-        stock.setVersion(version);
+//        Integer count = Integer.parseInt();
+//        Integer sale = Integer.parseInt(redisTemplate.opsForValue().get(RedisKeysConstant.STOCK_SALE + sid));
+        if (stock.getCount().equals(stock.getSale())){
+            throw new RuntimeException("库存不足 Redis currentCount=" + stock.getSale());
+        }
+//        Integer version = Integer.parseInt(redisTemplate.opsForValue().get(RedisKeysConstant.STOCK_VERSION + sid));
+//        StockDTO stock = new StockDTO() ;
+//        stock.setId(sid);
+//        stock.setCount(count);
+//        stock.setSale(sale);
+//        stock.setVersion(version);
 
         return stock;
     }
@@ -131,8 +137,10 @@ public class OrderServiceImpl implements IOrderService {
             throw new RuntimeException("并发更新库存失败") ;
         }
         //自增
-        redisTemplate.opsForValue().increment(RedisKeysConstant.STOCK_SALE + stock.getId(),1) ;
-        redisTemplate.opsForValue().increment(RedisKeysConstant.STOCK_VERSION + stock.getId(),1) ;
+        stock.setSale(stock.getSale() + 1);
+        stock.setVersion(stock.getVersion() + 1);
+        redisTemplate.opsForValue().getAndSet(RedisKeysConstant.STOCK_GOODS + stock.getId(), stock) ;
+//        redisTemplate.opsForValue().increment(RedisKeysConstant.STOCK_VERSION + stock.getId(), 1) ;
     }
 
 }

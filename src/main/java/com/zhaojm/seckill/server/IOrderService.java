@@ -7,5 +7,5 @@ public interface IOrderService {
     public int createOptimisticOrder(int sid);
     
     public int createOptimisticOrderUseRedis(int sid);
-    
+
 }

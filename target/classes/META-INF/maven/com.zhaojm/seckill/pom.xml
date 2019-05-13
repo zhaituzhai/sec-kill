@@ -13,6 +13,7 @@
     </parent>
     <properties>
         <java.version>1.8</java.version>
+        <distributed.version>1.0.3</distributed.version>
     </properties>
     
     <dependencies>
@@ -47,7 +48,7 @@
         <dependency>
             <groupId>top.crossoverjie.opensource</groupId>
             <artifactId>distributed-redis-tool</artifactId>
-            <version>1.0.3</version>
+            <version>${distributed.version}</version>
         </dependency>
 
         <!-- redis -->
