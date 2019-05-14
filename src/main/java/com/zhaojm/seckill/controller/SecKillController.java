@@ -38,6 +38,11 @@ public class SecKillController {
         return String.valueOf(id);
     }
     
+    /**
+     * 乐观锁秒杀商品
+     * @param sid
+     * @return
+     */
     @RequestMapping("/createOptimisticOrder/{sid}")
     public String createOptimisticOrder(@PathVariable int sid) {
         logger.info("sid=[{}]", sid);
@@ -50,6 +55,11 @@ public class SecKillController {
         return String.valueOf(id);
     }
     
+    /**
+     * 乐观锁+分布式限流
+     * @param sid
+     * @return
+     */
     @SpringControllerLimit(errorCode = 200)
     @RequestMapping("/createOptimisticLimitOrder/{sid}")
     public String createOptimisticLimitOrder(@PathVariable int sid) {
@@ -63,6 +73,11 @@ public class SecKillController {
         return String.valueOf(id);
     }
     
+    /**
+     * 乐观锁+分布式限流+reids
+     * @param sid
+     * @return
+     */
     @SpringControllerLimit(errorCode = 200,errorMsg = "request has limited")
     @RequestMapping("/createOptimisticLimitOrderByRedis/{sid}")
     public String createOptimisticLimitOrderByRedis(@PathVariable int sid) {

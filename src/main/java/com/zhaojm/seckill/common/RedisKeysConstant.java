@@ -1,9 +1,14 @@
 package com.zhaojm.seckill.common;
 
+/**
+ * Redis (remote dictionary service) Keys constant
+ * @author 赵嘉敏
+ * 
+ */
 public interface RedisKeysConstant {
 
     /**
-     * 库存
+     * 查询库存
      */
     String STOCK_COUNT = "stock_count_";
 
@@ -18,7 +23,7 @@ public interface RedisKeysConstant {
     String STOCK_VERSION = "stock_version_";
     
     /**
-     * 商品
+     * stock goods 商品
      */
     String STOCK_GOODS = "stock_goods_";
 }
