@@ -10,3 +10,5 @@ logPath_IS_UNDEFINED/
 .project
 out
 gen
+/target/
+/.classpath
