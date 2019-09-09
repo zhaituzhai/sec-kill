@@ -4,7 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zhaojm.seckill.server.ICommodityService;
@@ -18,9 +20,12 @@ public class CommodityController {
     @Autowired
     ICommodityService commodityService;
     
-    @GetMapping("/createNomalOrder/{cid}")
-    public int createNomalOrder(Integer cid) {
+    @GetMapping("/createNomalOrder")
+    public int createNomalOrder(@RequestParam Integer cid) {
 	logger.info("商品id[{}]", cid);
+	if(null == cid) {
+		return 0;
+	}
 	return commodityService.createNomalOrder(cid);
     }
     
