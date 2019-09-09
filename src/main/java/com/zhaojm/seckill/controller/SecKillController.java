@@ -43,7 +43,7 @@ public class SecKillController {
      * @param sid
      * @return
      */
-    @RequestMapping("/createOptimisticOrder/{sid}")
+    @GetMapping("/createOptimisticOrder/{sid}")
     public String createOptimisticOrder(@PathVariable int sid) {
         logger.info("sid=[{}]", sid);
         int id = 0;
@@ -61,7 +61,7 @@ public class SecKillController {
      * @return
      */
     @SpringControllerLimit(errorCode = 200)
-    @RequestMapping("/createOptimisticLimitOrder/{sid}")
+    @GetMapping("/createOptimisticLimitOrder/{sid}")
     public String createOptimisticLimitOrder(@PathVariable int sid) {
         logger.info("sid=[{}]", sid);
         int id = 0;
@@ -79,7 +79,7 @@ public class SecKillController {
      * @return
      */
     @SpringControllerLimit(errorCode = 200,errorMsg = "request has limited")
-    @RequestMapping("/createOptimisticLimitOrderByRedis/{sid}")
+    @GetMapping("/createOptimisticLimitOrderByRedis/{sid}")
     public String createOptimisticLimitOrderByRedis(@PathVariable int sid) {
         logger.info("sid=[{}]", sid);
         int id = 0;
