@@ -28,14 +28,14 @@ public class SecKillController {
      */
     @GetMapping("createWrongOrder/{sid}")
     public String createWrongOrder(@PathVariable int sid) {
-	logger.info("sid=[{}]", sid);
-	int id = 0;
-	try {
-	    id = orderService.createWrongOrder(sid);
-	} catch (Exception e) {
-	    logger.error("Exception", e);
-	}
-	return String.valueOf(id);
+        logger.info("sid=[{}]", sid);
+        int id = 0;
+        try {
+            id = orderService.createWrongOrder(sid);
+        } catch (Exception e) {
+            logger.error("Exception", e);
+        }
+        return String.valueOf(id);
     }
 
     /**
@@ -46,14 +46,14 @@ public class SecKillController {
      */
     @GetMapping("/createOptimisticOrder/{sid}")
     public String createOptimisticOrder(@PathVariable int sid) {
-	logger.info("sid=[{}]", sid);
-	int id = 0;
-	try {
-	    id = orderService.createOptimisticOrder(sid);
-	} catch (Exception e) {
-	    logger.error("Exception", e);
-	}
-	return String.valueOf(id);
+        logger.info("sid=[{}]", sid);
+        int id = 0;
+        try {
+            id = orderService.createOptimisticOrder(sid);
+        } catch (Exception e) {
+            logger.error("Exception", e);
+        }
+        return String.valueOf(id);
     }
 
     /**
@@ -65,14 +65,14 @@ public class SecKillController {
     @SpringControllerLimit(errorCode = 200)
     @GetMapping("/createOptimisticLimitOrder/{sid}")
     public String createOptimisticLimitOrder(@PathVariable int sid) {
-	logger.info("sid=[{}]", sid);
-	int id = 0;
-	try {
-	    id = orderService.createOptimisticOrder(sid);
-	} catch (Exception e) {
-	    logger.error("Exception", e);
-	}
-	return String.valueOf(id);
+        logger.info("sid=[{}]", sid);
+        int id = 0;
+        try {
+            id = orderService.createOptimisticOrder(sid);
+        } catch (Exception e) {
+            logger.error("Exception", e);
+        }
+        return String.valueOf(id);
     }
 
     /**
@@ -84,14 +84,14 @@ public class SecKillController {
     @SpringControllerLimit(errorCode = 200, errorMsg = "request has limited")
     @GetMapping("/createOptimisticLimitOrderByRedis/{sid}")
     public String createOptimisticLimitOrderByRedis(@PathVariable int sid) {
-	logger.info("sid=[{}]", sid);
-	int id = 0;
-	try {
-	    id = orderService.createOptimisticOrderUseRedis(sid);
-	} catch (Exception e) {
-	    logger.error("Exception", e);
-	}
-	return String.valueOf(id);
+        logger.info("sid=[{}]", sid);
+        int id = 0;
+        try {
+            id = orderService.createOptimisticOrderUseRedis(sid);
+        } catch (Exception e) {
+            logger.error("Exception", e);
+        }
+        return String.valueOf(id);
     }
 
 }

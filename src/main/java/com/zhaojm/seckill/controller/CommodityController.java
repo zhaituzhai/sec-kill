@@ -10,22 +10,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.zhaojm.seckill.server.ICommodityService;
 
-
 @RestController
 @RequestMapping("/buy")
 public class CommodityController {
     private static Logger logger = LoggerFactory.getLogger(CommodityController.class);
-    
+
     @Autowired
     ICommodityService commodityService;
-    
+
     @GetMapping("/createNomalOrder")
     public int createNomalOrder(@RequestParam Integer cid) {
-	logger.info("商品id[{}]", cid);
-	if(null == cid) {
-	    return 0;
-	}
-	return commodityService.createNomalOrder(cid);
+        logger.info("商品id[{}]", cid);
+        if (null == cid) {
+            return 0;
+        }
+        return commodityService.createNomalOrder(cid);
     }
-    
+
 }

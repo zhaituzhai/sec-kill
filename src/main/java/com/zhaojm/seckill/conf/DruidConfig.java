@@ -18,19 +18,20 @@ import com.alibaba.druid.support.http.WebStatFilter;
 
 @Configuration
 public class DruidConfig {
-    
+
     // 将所有前缀为spring.datasource下的配置项都加载到DataSource中
     @ConfigurationProperties(prefix = "spring.datasource")
     @Bean
     public DataSource druidDataSource() {
         return new DruidDataSource();
     }
-    
+
     @Bean
     public ServletRegistrationBean<?> druidStatViewServlet() {
-        ServletRegistrationBean<?> servletRegistrationBean = new ServletRegistrationBean<>(new StatViewServlet(),"/druid/*");
+        ServletRegistrationBean<?> servletRegistrationBean = new ServletRegistrationBean<>(new StatViewServlet(),
+                "/druid/*");
         Map<String, String> initParams = new HashMap<>();
-        //　可配的属性都在 StatViewServlet 和其父类下
+        // 可配的属性都在 StatViewServlet 和其父类下
         initParams.put("loginUsername", "admin");
         initParams.put("loginPassword", "1234");
         servletRegistrationBean.setInitParameters(initParams);
@@ -46,5 +47,5 @@ public class DruidConfig {
         filterRegistrationBean.setUrlPatterns(Arrays.asList("/*"));
         return filterRegistrationBean;
     }
-    
+
 }
