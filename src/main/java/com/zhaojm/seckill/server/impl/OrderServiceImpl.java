@@ -1,20 +1,26 @@
 package com.zhaojm.seckill.server.impl;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.zhaojm.seckill.common.RedisKeysConstant;
 import com.zhaojm.seckill.dto.StockDTO;
 import com.zhaojm.seckill.dto.StockOrderDTO;
+import com.zhaojm.seckill.dto.UpdateStockDTO;
 import com.zhaojm.seckill.mapper.IStockMapper;
 import com.zhaojm.seckill.mapper.IStockOrderMapper;
 import com.zhaojm.seckill.server.IOrderService;
 
 @Service
 public class OrderServiceImpl implements IOrderService {
+    
+    private static final String lockKey = "lockKey";
 
     @Autowired
     private IStockMapper stockMapper;
@@ -25,6 +31,16 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+    @Override
+    public int updateStore(UpdateStockDTO updateDTO) {
+        StockDTO stockDTO = stockMapper.selectByPrimaryKey(updateDTO.getSid());
+        stockDTO.setCount(stockDTO.getCount() + updateDTO.getAmount());
+        // 同步更新redis中的库存
+        redisTemplate.opsForValue().set(RedisKeysConstant.STOCK_GOODS + updateDTO.getSid(), stockDTO.getCount());
+        redisTemplate.opsForValue().set(RedisKeysConstant.GOODS_STOCK + updateDTO.getSid(), stockDTO.getCount());
+        return stockMapper.updateByPrimaryKey(stockDTO);
+    }
+    
     /**
      * 1.多线程错误生成错误数量订单
      */
@@ -73,6 +89,13 @@ public class OrderServiceImpl implements IOrderService {
         StockOrderDTO order = new StockOrderDTO();
         order.setSid(stock.getId());
         order.setName(stock.getName());
+        int id = stockOrderMapper.insertSelective(order);
+        return id;
+    }
+    private int createOrder(int sid, String name) {
+        StockOrderDTO order = new StockOrderDTO();
+        order.setSid(sid);
+        order.setName(name);
         int id = stockOrderMapper.insertSelective(order);
         return id;
     }
@@ -142,6 +165,33 @@ public class OrderServiceImpl implements IOrderService {
         stock.setSale(stock.getSale() + 1);
         stock.setVersion(stock.getVersion() + 1);
         redisTemplate.opsForValue().getAndSet(RedisKeysConstant.STOCK_GOODS + stock.getId(), stock);
+    }
+    
+    @Override
+    public int createRedisLockOrder(int sid) {
+        int result = -1;
+        String clientId = UUID.randomUUID().toString();
+        try {
+            Boolean keyState = redisTemplate.opsForValue().setIfAbsent(lockKey, clientId, 30, TimeUnit.SECONDS);
+
+            if (!keyState) {
+                return result;
+            }
+            int stock = (int) redisTemplate.opsForValue().get(RedisKeysConstant.GOODS_STOCK + sid);
+            if (stock > 0) {
+                int realStock = stock - 1;
+                redisTemplate.opsForValue().set("stock", realStock + ""); // jedis.set(key,value)
+                System.out.println("扣减成功，剩余库存:" + realStock + "");
+            } else {
+                System.out.println("扣减失败，库存不足");
+            }
+            result = createOrder(sid, "");
+        }finally {
+            if (clientId.equals(redisTemplate.opsForValue().get(lockKey))){
+                redisTemplate.delete(lockKey);
+            }
+        }
+        return result;
     }
 
 }

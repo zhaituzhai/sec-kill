@@ -26,4 +26,6 @@ public interface RedisKeysConstant {
      * stock goods 商品
      */
     String STOCK_GOODS = "stock_goods_";
+    
+    String GOODS_STOCK = "goods_stock_";
 }

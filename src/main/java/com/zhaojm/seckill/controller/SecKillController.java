@@ -5,10 +5,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.crossoverjie.distributed.annotation.SpringControllerLimit;
+import com.zhaojm.seckill.dto.UpdateStockDTO;
 import com.zhaojm.seckill.server.IOrderService;
 
 @RestController
@@ -19,6 +22,12 @@ public class SecKillController {
 
     @Autowired
     private IOrderService orderService;
+    
+    @PostMapping("updataStore")
+    public int updateStore(@RequestBody UpdateStockDTO updateDTO) {
+        logger.info("sid=[{}],amount=[{}]", updateDTO.getSid(), updateDTO.getAmount());
+        return orderService.updateStore(updateDTO);
+    }
 
     /**
      * 错误秒杀商品： 库存10件，使用100线程同时请求接口时订单生成65
@@ -50,6 +59,18 @@ public class SecKillController {
         int id = 0;
         try {
             id = orderService.createOptimisticOrder(sid);
+        } catch (Exception e) {
+            logger.error("Exception", e);
+        }
+        return String.valueOf(id);
+    }
+    
+    @GetMapping("")
+    public String createRedisLockOrder(@PathVariable int sid) {
+        logger.info("sid=[{}]", sid);
+        int id = 0;
+        try {
+            id = orderService.createRedisLockOrder(sid);
         } catch (Exception e) {
             logger.error("Exception", e);
         }
